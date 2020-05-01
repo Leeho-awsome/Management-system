@@ -11,9 +11,9 @@
       <el-row class="rows">
         <el-col class="col">
           <el-input placeholder="请输入内容" v-model="input3" class="ipts">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button @click="searchUser" slot="append" icon="el-icon-search"></el-button>
           </el-input>
-          <el-button type="success">成功按钮</el-button>
+          <el-button type="success">添加用户</el-button>
         </el-col>
       </el-row>
 
@@ -72,8 +72,11 @@ export default {
     };
   },
   methods: {
+      //搜索用户
+      searchUser(){
+      this.getUserlist();
+      },
     //   获取用户信息
-
     async getUserlist() {
       const AUTH_TOKEN = localStorage.getItem("token");
       console.log("AUTH_TOKEN: ", AUTH_TOKEN);
