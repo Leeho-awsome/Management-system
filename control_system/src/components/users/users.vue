@@ -18,6 +18,14 @@
       </el-row>
 
       <!-- 表格 -->
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column  type="index" label="#" width="60"></el-table-column>
+        <el-table-column prop="name" label="姓名" width="80"></el-table-column>
+        <el-table-column prop="email" label="邮箱" width="80"></el-table-column>
+        <el-table-column prop="email" label="电话" ></el-table-column>
+        <el-table-column prop="email" label="创建时间"></el-table-column>
+        <el-table-column prop="email" label="用户操作"></el-table-column>
+      </el-table>
     </el-card>
   </div>
 </template>
@@ -27,14 +35,31 @@ export default {
   name: "users",
   data() {
     return {
-        input3:"",
+      input3: "",
+      pagenum:'1',
+      pagesize:"5"
     };
+  },
+  methods: {
+    //   获取用户信息
+    
+    async  getUserlist(){
+        const AUTH_TOKEN =localStorage.getItem("token")
+        console.log('AUTH_TOKEN: ', AUTH_TOKEN);
+        this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+         const data = await this.$http.get(`http://127.0.0.1:8888/api/private/v1/users?query=${this.input3}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`) 
+          
+         console.log('data: ', data);
+      }
+  },
+  created () {
+      this.getUserlist()
   }
 };
 </script>
 
 <style >
-.ipts{
-    width: 300px; ;
+.ipts {
+  width: 300px;
 }
 </style>
