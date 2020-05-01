@@ -32,16 +32,19 @@ export default {
      methods: {
          //希望让我的异步操作,看起来想同步代码
         //  ES7 async await
-        //在异步操作有结果的前面加 await 在距离结果最近的函数加async 
+        //在异步操作有结果的前面加 await 在距离结果最近的函数加async
           async hardleLogin(){
-
         const res= await this.$http.post("http://127.0.0.1:8888/api/private/v1/login",this.formLabelAlign)
                 // console.log('res: ', res);
                 const{
                  meta:{msg,status}
                 } = res.data
+              
 
                     if(status===200){
+                        //存token
+                        localStorage.setItem("token",res.data.data.token)
+
                         this.$message.success(msg)
                         this.$router.push({name:"home"})
                     }else{
