@@ -6,8 +6,9 @@ import router from './router'
 //引入elUI框架
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
-
+import "@/assets/css/global.css"
+import aixos from "axios"
+Vue.prototype.$http=aixos
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
