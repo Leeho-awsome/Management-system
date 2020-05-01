@@ -13,7 +13,7 @@
           <el-input placeholder="请输入内容" v-model="input3" class="ipts">
             <el-button @click="searchUser" slot="append" icon="el-icon-search"></el-button>
           </el-input>
-          <el-button type="success">添加用户</el-button>
+          <el-button type="success" @click="showpage">添加用户</el-button>
         </el-col>
       </el-row>
 
@@ -55,6 +55,29 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+
+    <!-- 对话框 -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleadd">
+  <el-form :model="form">
+    <el-form-item label="用户名" :label-width="100">
+        
+      <el-input v-model="form.username" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="密码" :label-width="100">
+      <el-input v-model="form.password" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="邮箱" :label-width="100">
+      <el-input v-model="form.email" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="电话" :label-width="100">
+      <el-input v-model="form.mobile" autocomplete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisibleadd = false">取 消</el-button>
+    <el-button type="primary" @click="dialogFormVisibleadd = false">确 定</el-button>
+  </div>
+</el-dialog>
     </el-card>
   </div>
 </template>
@@ -65,10 +88,17 @@ export default {
   data() {
     return {
       input3: "",
-      pagenum: "1",
-      pagesize: "2",
+      pagenum: 1,
+      pagesize: 2,
       userlist: [],
-      total: -1
+      total: -1,
+      dialogFormVisibleadd:false,
+      form:{
+          username:"",
+          password:"",
+          email:"",
+          mobile:"",
+      }
     };
   },
   methods: {
@@ -111,6 +141,9 @@ export default {
         console.log(`当前页: ${val}`);
         this.pagenum=val;
           this.getUserlist();
+      },
+      showpage(){
+          this.dialogFormVisibleadd=true
       }
 
   },
