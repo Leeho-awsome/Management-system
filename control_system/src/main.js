@@ -8,12 +8,17 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import "@/assets/css/global.css"
 import aixos from "axios"
+import moment from "moment"
 Vue.prototype.$http=aixos
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
+//全局过滤器处理日期
+Vue.filter('fmtdate',(v)=>{
+  return moment(v).format("YYYY-MM--DD")
+})
 new Vue({
   el: '#app',
   router,

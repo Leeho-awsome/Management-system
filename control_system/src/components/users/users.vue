@@ -18,13 +18,17 @@
       </el-row>
 
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="userlist" style="width: 100%">
         <el-table-column  type="index" label="#" width="60"></el-table-column>
-        <el-table-column prop="name" label="姓名" width="80"></el-table-column>
-        <el-table-column prop="email" label="邮箱" width="80"></el-table-column>
-        <el-table-column prop="email" label="电话" ></el-table-column>
-        <el-table-column prop="email" label="创建时间"></el-table-column>
-        <el-table-column prop="email" label="用户操作"></el-table-column>
+        <el-table-column prop="username" label="姓名" width="100"></el-table-column>
+        <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
+        <el-table-column prop="mobile" label="电话" ></el-table-column>
+        <el-table-column  label="创建时间">
+            <template slot-scope="userlist" >
+                {{userlist|fmtdate}}
+            </template>
+        </el-table-column>
+        <el-table-column prop="mg_state" label="用户操作"></el-table-column>
       </el-table>
     </el-card>
   </div>
@@ -37,7 +41,10 @@ export default {
     return {
       input3: "",
       pagenum:'1',
-      pagesize:"5"
+      pagesize:"2",
+      userlist:[],
+
+      total:-1,
     };
   },
   methods: {
@@ -48,8 +55,19 @@ export default {
         console.log('AUTH_TOKEN: ', AUTH_TOKEN);
         this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN;
          const data = await this.$http.get(`http://127.0.0.1:8888/api/private/v1/users?query=${this.input3}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`) 
-          
          console.log('data: ', data);
+          console.log('data.data: ', data.data);
+          const {meta:{status,msg},data:{total,users}}=data.data
+          
+         if(status===200){
+            //  1给表格赋值,
+            this.userlist=users;
+            // 分页赋值
+            this.total=total;
+            this.$message.success(msg)
+         }else{
+             this.$message.warning(msg)
+         }
       }
   },
   created () {
