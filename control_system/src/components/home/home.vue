@@ -19,8 +19,7 @@
       <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose">
+    >
         <!-- ! -->
       <el-submenu index="1">
         <template slot="title">
@@ -103,7 +102,18 @@
 </template>
 <script>
 export default {
-    name:"home"
+    name:"home",
+    data () {
+      return {
+        
+      }
+    },
+    beforeCreate() {
+      const token=localStorage.getItem("token");
+      if(!token){
+        this.$router.push({name:"login"})
+      }
+    },
 }
 </script>
 <style >
