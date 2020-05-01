@@ -75,7 +75,7 @@
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisibleadd = false">取 消</el-button>
-    <el-button type="primary" @click="dialogFormVisibleadd = false">确 定</el-button>
+    <el-button type="primary" @click="addUser">确 定</el-button>
   </div>
 </el-dialog>
     </el-card>
@@ -133,17 +133,34 @@ export default {
     },
     //分页
      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        // console.log(`每页 ${val} 条`);
         this.pagesize=val;
        this.getUserlist();
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        // console.log(`当前页: ${val}`);
         this.pagenum=val;
           this.getUserlist();
       },
       showpage(){
-          this.dialogFormVisibleadd=true
+          this.dialogFormVisibleadd=true;
+      },
+      async addUser(){
+           this.dialogFormVisibleadd=false;
+           const res=await this.$http.post("http://127.0.0.1:8888/api/private/v1/users",this.form);
+           const {
+               meta:{status,msg},
+               data
+           }=res.data
+               console.log('status: ', status);
+           if(status ===201){
+            //    1提示成功;
+            this.$message.success(msg)
+            //g更新视图;
+            this.getUserlist();
+            //清空文本框
+            this.form={}
+           }
       }
 
   },
