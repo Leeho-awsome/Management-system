@@ -41,7 +41,7 @@
             <template slot-scope="scope">
   <el-button  plain type="primary" icon="el-icon-edit" circle></el-button>
   <el-button plain  type="success" icon="el-icon-check" circle></el-button>
-  <el-button  plain   type="danger" icon="el-icon-delete" circle></el-button>
+  <el-button  plain   type="danger" icon="el-icon-delete" circle @click="delUser(scope.row.id,scope.row.username)"></el-button>
             </template>
         </el-table-column>
       </el-table>
@@ -109,7 +109,7 @@ export default {
     //   获取用户信息
     async getUserlist() {
       const AUTH_TOKEN = localStorage.getItem("token");
-      console.log("AUTH_TOKEN: ", AUTH_TOKEN);
+      // 按要求设置接口请求头
       this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
       const data = await this.$http.get(
         `http://127.0.0.1:8888/api/private/v1/users?query=${this.input3}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`
@@ -161,6 +161,55 @@ export default {
             //清空文本框
             this.form={}
            }
+      },
+      // 删除用户
+        delUser(id,username) {
+        const h = this.$createElement;
+        this.$msgbox({
+          title: '删除用户',
+          message: h('p', null, [
+            h('span', null, '确定要删除用户 '),
+            h('i', { style: 'color: teal' }, `${username}`)
+          ]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              instance.confirmButtonLoading = true;
+              instance.confirmButtonText = '执行中...';
+              setTimeout(() => {
+                done();
+                setTimeout(() => {
+                  instance.confirmButtonLoading = false;
+                }, 300);
+              }, 1000);
+            } else {
+              done();
+            }
+          }
+        }).then( async action => {
+          const res = await this.$http.delete(`http://127.0.0.1:8888/api/private/v1/users/${id}`)
+          console.log('id: ', id);
+          console.log('res: ', res);
+          const {meta:{msg,status}}=res.data
+
+          if(status===200){
+             //g更新视图;
+             this.pagenum=1;
+            this.getUserlist();
+
+            this.$message({
+              type: 'info',
+              message: msg
+            });
+          }else{
+              this.$message({
+              type: 'info',
+              message: msg
+            });
+          }
+        });
       }
 
   },
