@@ -117,7 +117,7 @@
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
-    <el-button type="primary" @click="dialogFormVisibleRole = false">确 定</el-button>
+    <el-button type="primary" @click="setrole()">确 定</el-button>
   </div>
 </el-dialog>
     </el-card>
@@ -146,6 +146,7 @@ export default {
       },
       currentId:-1,
       roles:[],
+      currentUserid:-1,
     };
   },
   methods: {
@@ -317,6 +318,7 @@ export default {
     async pickRole(user){
       this.currentUsername=user.username;
         this.dialogFormVisibleRole=true;
+        this.currentUserid=user.id
 
           const data1 = await this.$http.get(
             `http://127.0.0.1:8888/api/private/v1/roles`
@@ -329,6 +331,15 @@ export default {
       );
         this.currentId=data.data.data.rid
         //  console.log('data: ', data);
+    },
+    //设置角色
+    async setrole(){
+     this.dialogFormVisibleRole = false;
+      const res =await this.$http.put(`http://127.0.0.1:8888/api/private/v1/users/${this.currentUserid}/role`,{
+        rid:this.currentId
+      })
+        console.log('this.currentId: ', this.currentId);
+        console.log('res: ', res);
     }
   },
   created() {
