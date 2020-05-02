@@ -31,6 +31,7 @@
               
           <el-switch
             style="display: block"
+            @change="changeUser(scope.row)"
             v-model="scope.row.mg_state"
             active-color="#13ce66"
             inactive-color="#ff4949"
@@ -39,7 +40,7 @@
         </el-table-column>
         <el-table-column prop="mg_state" label="用户操作">
             <template slot-scope="scope">
-  <el-button  plain type="primary" icon="el-icon-edit" circle  @click="editUser()"></el-button>
+  <el-button  plain type="primary" icon="el-icon-edit" circle  @click="editUser(scope.row)"></el-button>
   <el-button plain  type="success" icon="el-icon-check" circle></el-button>
   <el-button  plain   type="danger" icon="el-icon-delete" circle @click="delUser(scope.row.id,scope.row.username)"></el-button>
             </template>
@@ -81,7 +82,7 @@
   <!-- 编辑对话框 -->
      <el-dialog title="编辑用户" :visible.sync="dialogFormVisiblEdit">
   <el-form :model="form">
-    <el-form-item label="用户名" :label-width="100">
+    <el-form-item label="用户名" :label-width="100" disabled>
         
       <el-input v-model="form.username" autocomplete="off"></el-input>
     </el-form-item>
@@ -95,7 +96,7 @@
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisiblEdit = false">取 消</el-button>
-    <el-button type="primary" @click="addUser">确 定</el-button>
+    <el-button type="primary" @click="makeEdit">确 定</el-button>
   </div>
 </el-dialog>
 
@@ -124,6 +125,22 @@ export default {
     };
   },
   methods: {
+    //改变用户状态
+     async changeUser(user){
+      //  console.log('user: ', user);
+          const data= await this.$http.put(`http://127.0.0.1:8888/api/private/v1/users/${user.id}/state/${user.mg_state}`)
+             const {
+        meta: { status, msg },
+        data: { total, users }
+      } = data.data;
+
+      if (status === 200) {
+    
+        this.$message.success(msg);
+      } else {
+        this.$message.warning(msg);
+      }
+    },
       //搜索用户
       searchUser(){
       this.getUserlist();
@@ -136,8 +153,8 @@ export default {
       const data = await this.$http.get(
         `http://127.0.0.1:8888/api/private/v1/users?query=${this.input3}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`
       );
-      console.log("data: ", data);
-      console.log("data.data: ", data.data);
+      // console.log("data: ", data);
+      // console.log("data.data: ", data.data);
       const {
         meta: { status, msg },
         data: { total, users }
@@ -168,13 +185,14 @@ export default {
           this.dialogFormVisibleadd=true;
       },
       async addUser(){
+        this.form={}
            this.dialogFormVisibleadd=false;
            const res=await this.$http.post("http://127.0.0.1:8888/api/private/v1/users",this.form);
            const {
                meta:{status,msg},
                data
            }=res.data
-               console.log('status: ', status);
+              //  console.log('status: ', status);
            if(status ===201){
             //    1提示成功;
             this.$message.success(msg)
@@ -212,8 +230,8 @@ export default {
           }
         }).then( async action => {
           const res = await this.$http.delete(`http://127.0.0.1:8888/api/private/v1/users/${id}`)
-          console.log('id: ', id);
-          console.log('res: ', res);
+          // console.log('id: ', id);
+          // console.log('res: ', res);
           const {meta:{msg,status}}=res.data
 
           if(status===200){
@@ -234,8 +252,29 @@ export default {
         });
       },
       //编辑用户
-      editUser(){
+      editUser(user){
+        this.form=user;
         this.dialogFormVisiblEdit=true;
+      },
+      //编辑请求
+      async makeEdit(){
+         const res = await this.$http.put(`http://127.0.0.1:8888/api/private/v1/users/${this.form.id}`,this.form)
+            const {meta:{msg,status}}=res.data
+                if(status===200){
+             //g更新视图;
+           
+            this.getUserlist();
+             this.dialogFormVisiblEdit=false;
+            this.$message({
+              type: 'info',
+              message: msg
+            });
+          }else{
+              this.$message({
+              type: 'info',
+              message: msg
+            });
+          }
       }
 
   },
