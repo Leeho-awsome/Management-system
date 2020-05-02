@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column prop="mg_state" label="用户操作">
             <template slot-scope="scope">
-  <el-button  plain type="primary" icon="el-icon-edit" circle></el-button>
+  <el-button  plain type="primary" icon="el-icon-edit" circle  @click="editUser()"></el-button>
   <el-button plain  type="success" icon="el-icon-check" circle></el-button>
   <el-button  plain   type="danger" icon="el-icon-delete" circle @click="delUser(scope.row.id,scope.row.username)"></el-button>
             </template>
@@ -56,7 +56,7 @@
       :total="total">
     </el-pagination>
 
-    <!-- 对话框 -->
+    <!-- 添加对话框 -->
     <el-dialog title="添加用户" :visible.sync="dialogFormVisibleadd">
   <el-form :model="form">
     <el-form-item label="用户名" :label-width="100">
@@ -78,6 +78,27 @@
     <el-button type="primary" @click="addUser">确 定</el-button>
   </div>
 </el-dialog>
+  <!-- 编辑对话框 -->
+     <el-dialog title="编辑用户" :visible.sync="dialogFormVisiblEdit">
+  <el-form :model="form">
+    <el-form-item label="用户名" :label-width="100">
+        
+      <el-input v-model="form.username" autocomplete="off"></el-input>
+    </el-form-item>
+  
+    <el-form-item label="邮箱" :label-width="100">
+      <el-input v-model="form.email" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="电话" :label-width="100">
+      <el-input v-model="form.mobile" autocomplete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisiblEdit = false">取 消</el-button>
+    <el-button type="primary" @click="addUser">确 定</el-button>
+  </div>
+</el-dialog>
+
     </el-card>
   </div>
 </template>
@@ -93,6 +114,7 @@ export default {
       userlist: [],
       total: -1,
       dialogFormVisibleadd:false,
+      dialogFormVisiblEdit:false,
       form:{
           username:"",
           password:"",
@@ -210,6 +232,10 @@ export default {
             });
           }
         });
+      },
+      //编辑用户
+      editUser(){
+        this.dialogFormVisiblEdit=true;
       }
 
   },
