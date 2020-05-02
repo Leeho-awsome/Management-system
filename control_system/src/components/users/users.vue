@@ -106,17 +106,18 @@
       <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRole">
   <el-form :model="form">
     <el-form-item label="用户名" label-width="100px">
-      {{"当前用户名"}}
+      {{currentUsername}}
     </el-form-item>
     <el-form-item label="角色" label-width="100px">
       <el-select v-model="currentId" >
         <el-option label="请选择" :value="-1"></el-option>
+         <el-option :label="item.roleName" :value="i" v-for="(item,i) in roles " :key="i"></el-option>
       </el-select>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+    <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
+    <el-button type="primary" @click="dialogFormVisibleRole = false">确 定</el-button>
   </div>
 </el-dialog>
     </el-card>
@@ -136,6 +137,7 @@ export default {
       dialogFormVisibleadd: false,
       dialogFormVisiblEdit: false,
       dialogFormVisibleRole:false,
+      currentUsername:"",
       form: {
         username: "",
         password: "",
@@ -143,6 +145,7 @@ export default {
         mobile: ""
       },
       currentId:-1,
+      roles:[],
     };
   },
   methods: {
@@ -311,8 +314,21 @@ export default {
       }
     },
     //分配角色
-    pickRole(user){
-        this.dialogFormVisibleRole=true
+    async pickRole(user){
+      this.currentUsername=user.username;
+        this.dialogFormVisibleRole=true;
+
+          const data1 = await this.$http.get(
+            `http://127.0.0.1:8888/api/private/v1/roles`
+      );
+           this.roles=data1.data.data
+         
+          //  console.log('data1.data.data.rid: ', data1.data);
+       const data = await this.$http.get(
+         `http://127.0.0.1:8888/api/private/v1/users/${user.id}}`
+      );
+        this.currentId=data.data.data.rid
+        //  console.log('data: ', data);
     }
   },
   created() {
